@@ -1,0 +1,5 @@
+a = input()
+p = input()
+k = len(p)
+invalid = set(a[i:i+k] for i in range(len(a)-k+1) if a[i:i+k] != p)
+print(p)
