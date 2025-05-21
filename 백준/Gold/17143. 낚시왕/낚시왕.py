@@ -1,6 +1,6 @@
 import sys
 input = sys.stdin.readline
-R,C,M = map(int, sys.stdin.readline().split()) # 세로 가로 상어의 수
+R,C,M = map(int, sys.stdin.readline().split())
 if M == 0:
     print(0)
     sys.exit()
@@ -13,6 +13,7 @@ while sharkinfo:
 result = 0
 dx = [-1,1,0,0]
 dy = [0,0,1,-1]
+# 낚시왕 이동
 for i in range(C):
     for j in range(R):
         if pan[j][i]:
@@ -25,24 +26,64 @@ for i in range(C):
                 s,d,z=pan[j][k].pop()
                 shark.append([j,k,s,d,z])
     while shark:
-        j,k,s,d,z = shark.pop()
-        for _ in range(s):
-            j = j+dx[d-1]
-            k = k+dy[d-1]
-            if k<0 or j<0 or j>R-1 or k>C-1:
-                if d==1:
-                    d=2
-                elif d==2:
-                    d=1
-                elif d==3:
-                    d=4
-                elif d==4:
-                    d=3
-                j = j+dx[d-1]
-                k = k+dy[d-1] 
-                j = j+dx[d-1]
-                k = k+dy[d-1] 
-        pan[j][k].append([s,d,z])
+        j, k, s, d, z = shark.pop()
+        if d == 1 or d == 2:
+            cycle = (R-1)*2
+            move = s % cycle
+            if d == 1:
+                if move <= j:
+                    nj = j - move
+                    nd = 1
+                else:
+                    move -= j
+                    if move <= R-1:
+                        nj = move
+                        nd = 2
+                    else:
+                        nj = 2*(R-1) - move
+                        nd = 1
+            else:
+                if move <= R-1-j:
+                    nj = j + move
+                    nd = 2
+                else:
+                    move -= (R-1-j)
+                    if move <= R-1:
+                        nj = R-1 - move
+                        nd = 1
+                    else:
+                        nj = move - (R-1)
+                        nd = 2
+            nk = k
+        else:
+            cycle = (C-1)*2
+            move = s % cycle
+            if d == 4:
+                if move <= k:
+                    nk = k - move
+                    nd = 4
+                else:
+                    move -= k
+                    if move <= C-1:
+                        nk = move
+                        nd = 3
+                    else:
+                        nk = 2*(C-1) - move
+                        nd = 4
+            else:
+                if move <= C-1-k:
+                    nk = k + move
+                    nd = 3
+                else:
+                    move -= (C-1-k)
+                    if move <= C-1:
+                        nk = C-1 - move
+                        nd = 4
+                    else:
+                        nk = move - (C-1)
+                        nd = 3
+            nj = j
+        pan[nj][nk].append([s, nd, z])
     for j in range(R):
         for k in range(C):
             if len(pan[j][k])>=2:
